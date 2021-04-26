@@ -1,6 +1,6 @@
 # Color Pallete Generator
 
-- [Live Demo](https://unknownpgr.github.io/color-palatte)
+- [Live Demo](https://unknownpgr.github.io/color-palette)
 
 뜬금없이, 이미지의 모든 픽셀을 적절한 기준에 따라 보여주면 어떨까 하는 생각이 들었다. 다음과 같은...크게 쓸데는 없지만 재미있는 프로젝트를 해 볼 수 있지 않을까?
 
@@ -60,4 +60,3 @@
 
 <img src="imgs/p5.jpg" alt="img1" style="width:40%;" />
 <img src="imgs/dp5.png" alt="img1" style="width:40%;" />
-
