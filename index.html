@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 2rem auto 2rem auto;
+        }
+
+        .center {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            margin-top: 1rem;
+        }
+
+        img {
+            display: block;
+            max-width: 350px;
+            width: auto;
+            height: auto;
+        }
+
+        #log {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>
+            Color Palette Generator
+        </h1>
+        <div id="log">Please select an image file.</div>
+        <div>
+            <input type='file' onchange="readURL(this);" />
+        </div>
+        <div class="center">
+            <img id="originImg" width="350" src="" alt="">
+            <canvas id="cnv" width="350" height="0"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let ctx = cnv.getContext('2d')
+        ctx.fillRect(0, 0, 9999, 9999)
+
+
+        function readURL(input) {
+            if (input.files && input.files[0]) {
+                cnv.height = 0;
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    originImg.src = e.target.result
+                    log.innerText = 'Image selected. Generating palette...'
+                    setTimeout(() => {
+                        getColorPalate(originImg)
+                    }, 10);
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function getColorPalate(img) {
+            ctx.clearRect(0, 0, 9999, 9999)
+
+            const { width, height } = img
+
+            cnv.width = width;
+            cnv.height = height;
+            ctx.drawImage(img, 0, 0, img.width, img.height);
+
+            let pixels = []
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    let pixel = ctx.getImageData(j, i, 1, 1).data
+
+                    let [r, g, b, a] = pixel
+
+                    let v = (r + g + b) * a;
+
+                    pixels.push([v, pixel])
+                }
+            }
+            pixels = pixels.sort((x, y) => y[0] - x[0])
+
+            let imageData = ctx.getImageData(0, 0, width, height)
+            let rawData = imageData.data
+            for (let i = 0; i < height; i++) {
+                for (let j = 0; j < width; j++) {
+                    let offset = i * width + j
+                    rawData[offset * 4 + 0] = pixels[offset][1][0]
+                    rawData[offset * 4 + 1] = pixels[offset][1][1]
+                    rawData[offset * 4 + 2] = pixels[offset][1][2]
+                    rawData[offset * 4 + 3] = pixels[offset][1][3]
+                }
+            }
+            ctx.putImageData(imageData, 0, 0)
+            log.innerText = 'Palette generated.'
+        }
+    </script>
+</body>
+
+</html>
